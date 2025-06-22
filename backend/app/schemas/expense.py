@@ -27,7 +27,7 @@ class ExpenseBase(BaseModel):
     title: str
     description: Optional[str] = None
     amount: Decimal
-    currency: str = "USD"
+    currency: str = "INR"
     split_type: SplitType = SplitType.EQUAL
 
 class ExpenseCreate(ExpenseBase):

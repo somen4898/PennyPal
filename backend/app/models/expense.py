@@ -16,7 +16,7 @@ class Expense(Base):
     title = Column(String, nullable=False)
     description = Column(Text)
     amount = Column(Numeric(10, 2), nullable=False)
-    currency = Column(String(3), default="USD")
+    currency = Column(String(3), default="INR")
     split_type = Column(Enum(SplitType), default=SplitType.EQUAL)
     group_id = Column(Integer, ForeignKey("groups.id"), nullable=False)
     created_by_id = Column(Integer, ForeignKey("users.id"), nullable=False)

@@ -7,7 +7,7 @@ from app.schemas.user import UserResponse
 
 class SettlementBase(BaseModel):
     amount: Decimal
-    currency: str = "USD"
+    currency: str = "INR"
     description: Optional[str] = None
 
 class SettlementCreate(SettlementBase):

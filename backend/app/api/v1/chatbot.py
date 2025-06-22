@@ -112,7 +112,7 @@ def _create_expense_from_action(action_data: Dict, current_user: User, db: Sessi
         title=title,
         description=f"Added via chatbot",
         amount=amount,
-        currency="USD",
+        currency="INR",
         split_type=SplitType.EQUAL,
         group_id=group_id,
         splits=splits
@@ -152,7 +152,7 @@ def _create_expense_from_action(action_data: Dict, current_user: User, db: Sessi
     db.commit()
     
     return {
-        "message": f"Expense '{title}' for ${amount} added successfully!",
+        "message": f"Expense '{title}' for ₹{amount} added successfully!",
         "expense_id": db_expense.id
     }
 
@@ -173,7 +173,7 @@ def _create_settlement_from_action(action_data: Dict, current_user: User, db: Se
     settlement_create = SettlementCreate(
         payee_id=payee_id,
         amount=amount,
-        currency="USD",
+        currency="INR",
         description="Created via chatbot",
         group_id=group_id
     )
@@ -208,7 +208,7 @@ def _create_settlement_from_action(action_data: Dict, current_user: User, db: Se
     db.refresh(db_settlement)
     
     return {
-        "message": f"Settlement of ${amount} to {payee.full_name} created successfully!",
+        "message": f"Settlement of ₹{amount} to {payee.full_name} created successfully!",
         "settlement_id": db_settlement.id
     }
 

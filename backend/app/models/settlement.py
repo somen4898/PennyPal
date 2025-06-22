@@ -16,7 +16,7 @@ class Settlement(Base):
     payer_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     payee_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     amount = Column(Numeric(10, 2), nullable=False)
-    currency = Column(String(3), default="USD")
+    currency = Column(String(3), default="INR")
     description = Column(Text)
     status = Column(Enum(SettlementStatus), default=SettlementStatus.PENDING)
     group_id = Column(Integer, ForeignKey("groups.id"))
