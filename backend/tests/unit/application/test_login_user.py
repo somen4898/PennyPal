@@ -35,7 +35,9 @@ class TestLoginUser:
         auth_provider.create_access_token.assert_called_once_with(subject="a@b.com")
 
     @pytest.mark.asyncio
-    async def test_login_wrong_password(self, user_repo: AsyncMock, auth_provider: MagicMock) -> None:
+    async def test_login_wrong_password(
+        self, user_repo: AsyncMock, auth_provider: MagicMock
+    ) -> None:
         user_repo.get_by_email.return_value = User(
             id=1, email="a@b.com", username="alice", full_name="Alice", hashed_password="x"
         )
@@ -46,7 +48,9 @@ class TestLoginUser:
             await cmd.execute("a@b.com", "wrong")
 
     @pytest.mark.asyncio
-    async def test_login_nonexistent_email(self, user_repo: AsyncMock, auth_provider: MagicMock) -> None:
+    async def test_login_nonexistent_email(
+        self, user_repo: AsyncMock, auth_provider: MagicMock
+    ) -> None:
         user_repo.get_by_email.return_value = None
 
         cmd = LoginUserCommand(user_repo, auth_provider)
@@ -54,9 +58,16 @@ class TestLoginUser:
             await cmd.execute("nobody@b.com", "pass123")
 
     @pytest.mark.asyncio
-    async def test_login_inactive_user(self, user_repo: AsyncMock, auth_provider: MagicMock) -> None:
+    async def test_login_inactive_user(
+        self, user_repo: AsyncMock, auth_provider: MagicMock
+    ) -> None:
         user_repo.get_by_email.return_value = User(
-            id=1, email="a@b.com", username="alice", full_name="Alice", hashed_password="x", is_active=False
+            id=1,
+            email="a@b.com",
+            username="alice",
+            full_name="Alice",
+            hashed_password="x",
+            is_active=False,
         )
         auth_provider.verify_password.return_value = True
 

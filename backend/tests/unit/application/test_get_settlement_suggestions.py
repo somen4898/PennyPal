@@ -29,9 +29,7 @@ class TestGetSettlementSuggestions:
     async def test_get_suggestions_success(
         self, expense_repo: AsyncMock, group_repo: AsyncMock, user_repo: AsyncMock
     ) -> None:
-        group_repo.get_member.return_value = GroupMember(
-            id=1, group_id=1, user_id=1, is_admin=True
-        )
+        group_repo.get_member.return_value = GroupMember(id=1, group_id=1, user_id=1, is_admin=True)
         expense_repo.get_group_splits.return_value = [
             {
                 "expense_creator_id": 1,
@@ -47,8 +45,16 @@ class TestGetSettlementSuggestions:
             },
         ]
         user_repo.get_by_ids.return_value = [
-            User(id=1, email="alice@example.com", username="alice", full_name="Alice", hashed_password="x"),
-            User(id=2, email="bob@example.com", username="bob", full_name="Bob", hashed_password="x"),
+            User(
+                id=1,
+                email="alice@example.com",
+                username="alice",
+                full_name="Alice",
+                hashed_password="x",
+            ),
+            User(
+                id=2, email="bob@example.com", username="bob", full_name="Bob", hashed_password="x"
+            ),
         ]
 
         query = GetSettlementSuggestionsQuery(expense_repo, group_repo, user_repo)

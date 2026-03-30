@@ -37,7 +37,9 @@ class TestRegisterUser:
         auth_provider.hash_password.assert_called_once_with("pass123")
 
     @pytest.mark.asyncio
-    async def test_register_duplicate_email(self, user_repo: AsyncMock, auth_provider: AsyncMock) -> None:
+    async def test_register_duplicate_email(
+        self, user_repo: AsyncMock, auth_provider: AsyncMock
+    ) -> None:
         user_repo.get_by_email.return_value = User(
             id=1, email="a@b.com", username="alice", full_name="Alice", hashed_password="x"
         )
