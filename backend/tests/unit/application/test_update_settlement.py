@@ -30,9 +30,7 @@ class TestUpdateSettlement:
 
     @pytest.mark.asyncio
     async def test_update_status_completed(self, settlement_repo: AsyncMock) -> None:
-        settlement = Settlement(
-            id=1, payer_id=1, payee_id=2, amount=Decimal("100.00")
-        )
+        settlement = Settlement(id=1, payer_id=1, payee_id=2, amount=Decimal("100.00"))
         settlement_repo.get_by_id.return_value = settlement
         settlement_repo.update.return_value = settlement
 

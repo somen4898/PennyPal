@@ -9,6 +9,7 @@ export default defineNuxtConfig({
     fallback: 'dark',
   },
   devtools: { enabled: true },
+  telemetry: false,
   runtimeConfig: {
     apiBaseUrl: 'http://localhost:8000',
     public: {

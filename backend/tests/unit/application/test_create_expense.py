@@ -45,7 +45,9 @@ class TestCreateExpense:
         expense_repo.create_splits.assert_called_once()
 
     @pytest.mark.asyncio
-    async def test_create_non_member_raises(self, expense_repo: AsyncMock, group_repo: AsyncMock) -> None:
+    async def test_create_non_member_raises(
+        self, expense_repo: AsyncMock, group_repo: AsyncMock
+    ) -> None:
         group_repo.get_member.return_value = None
 
         cmd = CreateExpenseCommand(expense_repo, group_repo)

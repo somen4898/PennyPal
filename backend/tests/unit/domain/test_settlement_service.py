@@ -10,19 +10,49 @@ class TestCalculateBalances:
     def test_single_expense_two_users(self) -> None:
         # User 1 paid 100, split equally with user 2
         splits = [
-            {"expense_creator_id": 1, "user_id": 1, "amount": Decimal("50"), "total_amount": Decimal("100")},
-            {"expense_creator_id": 1, "user_id": 2, "amount": Decimal("50"), "total_amount": Decimal("100")},
+            {
+                "expense_creator_id": 1,
+                "user_id": 1,
+                "amount": Decimal("50"),
+                "total_amount": Decimal("100"),
+            },
+            {
+                "expense_creator_id": 1,
+                "user_id": 2,
+                "amount": Decimal("50"),
+                "total_amount": Decimal("100"),
+            },
         ]
         balances = calculate_balances_from_splits(splits)
-        assert balances[1] == Decimal("50")   # user 1 is owed 50
+        assert balances[1] == Decimal("50")  # user 1 is owed 50
         assert balances[2] == Decimal("-50")  # user 2 owes 50
 
     def test_two_expenses_cancel_out(self) -> None:
         splits = [
-            {"expense_creator_id": 1, "user_id": 1, "amount": Decimal("50"), "total_amount": Decimal("100")},
-            {"expense_creator_id": 1, "user_id": 2, "amount": Decimal("50"), "total_amount": Decimal("100")},
-            {"expense_creator_id": 2, "user_id": 1, "amount": Decimal("50"), "total_amount": Decimal("100")},
-            {"expense_creator_id": 2, "user_id": 2, "amount": Decimal("50"), "total_amount": Decimal("100")},
+            {
+                "expense_creator_id": 1,
+                "user_id": 1,
+                "amount": Decimal("50"),
+                "total_amount": Decimal("100"),
+            },
+            {
+                "expense_creator_id": 1,
+                "user_id": 2,
+                "amount": Decimal("50"),
+                "total_amount": Decimal("100"),
+            },
+            {
+                "expense_creator_id": 2,
+                "user_id": 1,
+                "amount": Decimal("50"),
+                "total_amount": Decimal("100"),
+            },
+            {
+                "expense_creator_id": 2,
+                "user_id": 2,
+                "amount": Decimal("50"),
+                "total_amount": Decimal("100"),
+            },
         ]
         balances = calculate_balances_from_splits(splits)
         assert balances.get(1, Decimal("0")) == Decimal("0")
@@ -60,21 +90,56 @@ class TestCalculateBalancesAdvanced:
     def test_three_way_expense(self) -> None:
         # User 1 paid 300, split among 3
         splits = [
-            {"expense_creator_id": 1, "user_id": 1, "amount": Decimal("100"), "total_amount": Decimal("300")},
-            {"expense_creator_id": 1, "user_id": 2, "amount": Decimal("100"), "total_amount": Decimal("300")},
-            {"expense_creator_id": 1, "user_id": 3, "amount": Decimal("100"), "total_amount": Decimal("300")},
+            {
+                "expense_creator_id": 1,
+                "user_id": 1,
+                "amount": Decimal("100"),
+                "total_amount": Decimal("300"),
+            },
+            {
+                "expense_creator_id": 1,
+                "user_id": 2,
+                "amount": Decimal("100"),
+                "total_amount": Decimal("300"),
+            },
+            {
+                "expense_creator_id": 1,
+                "user_id": 3,
+                "amount": Decimal("100"),
+                "total_amount": Decimal("300"),
+            },
         ]
         balances = calculate_balances_from_splits(splits)
-        assert balances[1] == Decimal("200")   # owed 200
+        assert balances[1] == Decimal("200")  # owed 200
         assert balances[2] == Decimal("-100")  # owes 100
         assert balances[3] == Decimal("-100")  # owes 100
 
     def test_multiple_expenses_same_creator(self) -> None:
         splits = [
-            {"expense_creator_id": 1, "user_id": 1, "amount": Decimal("25"), "total_amount": Decimal("50")},
-            {"expense_creator_id": 1, "user_id": 2, "amount": Decimal("25"), "total_amount": Decimal("50")},
-            {"expense_creator_id": 1, "user_id": 1, "amount": Decimal("50"), "total_amount": Decimal("100")},
-            {"expense_creator_id": 1, "user_id": 2, "amount": Decimal("50"), "total_amount": Decimal("100")},
+            {
+                "expense_creator_id": 1,
+                "user_id": 1,
+                "amount": Decimal("25"),
+                "total_amount": Decimal("50"),
+            },
+            {
+                "expense_creator_id": 1,
+                "user_id": 2,
+                "amount": Decimal("25"),
+                "total_amount": Decimal("50"),
+            },
+            {
+                "expense_creator_id": 1,
+                "user_id": 1,
+                "amount": Decimal("50"),
+                "total_amount": Decimal("100"),
+            },
+            {
+                "expense_creator_id": 1,
+                "user_id": 2,
+                "amount": Decimal("50"),
+                "total_amount": Decimal("100"),
+            },
         ]
         balances = calculate_balances_from_splits(splits)
         assert balances[1] == Decimal("75")
@@ -83,7 +148,12 @@ class TestCalculateBalancesAdvanced:
     def test_large_group_balances(self) -> None:
         # User 1 paid 500, split equally among 5
         splits = [
-            {"expense_creator_id": 1, "user_id": uid, "amount": Decimal("100"), "total_amount": Decimal("500")}
+            {
+                "expense_creator_id": 1,
+                "user_id": uid,
+                "amount": Decimal("100"),
+                "total_amount": Decimal("500"),
+            }
             for uid in range(1, 6)
         ]
         balances = calculate_balances_from_splits(splits)

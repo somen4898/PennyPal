@@ -50,9 +50,7 @@ class SqlAlchemyUserRepository(UserRepository):
     async def get_by_ids(self, user_ids: list[int]) -> list[User]:
         if not user_ids:
             return []
-        result = await self._session.execute(
-            select(UserModel).where(UserModel.id.in_(user_ids))
-        )
+        result = await self._session.execute(select(UserModel).where(UserModel.id.in_(user_ids)))
         return [UserMapper.to_domain(m) for m in result.scalars().all()]
 
     async def list_all(self, skip: int = 0, limit: int = 100) -> list[User]:

@@ -29,7 +29,9 @@ class TestAddGroupMember:
         user_repo.get_by_id.return_value = User(
             id=2, email="b@b.com", username="bob", full_name="Bob", hashed_password="x"
         )
-        group_repo.add_member.return_value = GroupMember(id=2, group_id=1, user_id=2, is_admin=False)
+        group_repo.add_member.return_value = GroupMember(
+            id=2, group_id=1, user_id=2, is_admin=False
+        )
 
         cmd = AddGroupMemberCommand(group_repo, user_repo)
         result = await cmd.execute(group_id=1, user_id=2, is_admin=False, current_user_id=1)
@@ -39,7 +41,9 @@ class TestAddGroupMember:
         group_repo.add_member.assert_called_once()
 
     @pytest.mark.asyncio
-    async def test_add_member_group_not_found(self, group_repo: AsyncMock, user_repo: AsyncMock) -> None:
+    async def test_add_member_group_not_found(
+        self, group_repo: AsyncMock, user_repo: AsyncMock
+    ) -> None:
         group_repo.get_by_id.return_value = None
 
         cmd = AddGroupMemberCommand(group_repo, user_repo)
@@ -49,14 +53,18 @@ class TestAddGroupMember:
     @pytest.mark.asyncio
     async def test_add_member_not_admin(self, group_repo: AsyncMock, user_repo: AsyncMock) -> None:
         group_repo.get_by_id.return_value = Group(id=1, name="Trip", created_by_id=1)
-        group_repo.get_member.return_value = GroupMember(id=1, group_id=1, user_id=1, is_admin=False)
+        group_repo.get_member.return_value = GroupMember(
+            id=1, group_id=1, user_id=1, is_admin=False
+        )
 
         cmd = AddGroupMemberCommand(group_repo, user_repo)
         with pytest.raises(ForbiddenError, match="Only group admins can invite users"):
             await cmd.execute(group_id=1, user_id=2, is_admin=False, current_user_id=1)
 
     @pytest.mark.asyncio
-    async def test_add_member_user_not_found(self, group_repo: AsyncMock, user_repo: AsyncMock) -> None:
+    async def test_add_member_user_not_found(
+        self, group_repo: AsyncMock, user_repo: AsyncMock
+    ) -> None:
         group_repo.get_by_id.return_value = Group(id=1, name="Trip", created_by_id=1)
         group_repo.get_member.side_effect = [
             GroupMember(id=1, group_id=1, user_id=1, is_admin=True),  # admin check

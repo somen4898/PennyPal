@@ -14,7 +14,9 @@ def group_repo() -> AsyncMock:
 class TestCreateGroup:
     @pytest.mark.asyncio
     async def test_create_group_success(self, group_repo: AsyncMock) -> None:
-        group_repo.create.return_value = Group(id=1, name="Trip", description="Goa trip", created_by_id=1)
+        group_repo.create.return_value = Group(
+            id=1, name="Trip", description="Goa trip", created_by_id=1
+        )
         group_repo.get_by_id.return_value = Group(
             id=1,
             name="Trip",
@@ -34,7 +36,9 @@ class TestCreateGroup:
     @pytest.mark.asyncio
     async def test_create_group_adds_creator_as_admin(self, group_repo: AsyncMock) -> None:
         group_repo.create.return_value = Group(id=1, name="Trip", description=None, created_by_id=1)
-        group_repo.get_by_id.return_value = Group(id=1, name="Trip", description=None, created_by_id=1)
+        group_repo.get_by_id.return_value = Group(
+            id=1, name="Trip", description=None, created_by_id=1
+        )
 
         cmd = CreateGroupCommand(group_repo)
         await cmd.execute("Trip", None, creator_id=1)

@@ -24,9 +24,7 @@ class TestGetGroupExpenses:
     async def test_get_group_expenses_success(
         self, expense_repo: AsyncMock, group_repo: AsyncMock
     ) -> None:
-        group_repo.get_member.return_value = GroupMember(
-            id=1, group_id=1, user_id=1, is_admin=True
-        )
+        group_repo.get_member.return_value = GroupMember(id=1, group_id=1, user_id=1, is_admin=True)
         expense_repo.get_by_group.return_value = [
             Expense(
                 id=1,

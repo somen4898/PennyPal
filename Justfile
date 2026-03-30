@@ -3,6 +3,10 @@
 # Start everything (backend + frontend)
 dev:
     #!/usr/bin/env bash
+    # Kill any existing processes on our ports
+    lsof -t -i:8000 -i:3000 2>/dev/null | xargs kill 2>/dev/null
+    sleep 1
+
     echo "Starting SETTL..."
     echo ""
     echo "  Backend  → http://localhost:8000"
@@ -14,11 +18,11 @@ dev:
     cd backend && source .venv/bin/activate && uvicorn run:app --reload --port 8000 &
     BACKEND_PID=$!
 
-    # Start frontend in background
-    cd frontend && pnpm dev &
+    # Start frontend in foreground (so Ctrl+C works)
+    cd frontend && NUXT_TELEMETRY_DISABLED=1 pnpm dev &
     FRONTEND_PID=$!
 
-    # Wait for either to exit
+    # Wait for either to exit, kill both on Ctrl+C
     trap "kill $BACKEND_PID $FRONTEND_PID 2>/dev/null; exit" INT TERM
     wait
 
@@ -28,7 +32,7 @@ backend:
 
 # Frontend only
 frontend:
-    cd frontend && pnpm dev
+    cd frontend && NUXT_TELEMETRY_DISABLED=1 pnpm dev
 
 # Run all backend tests
 test:
@@ -66,3 +70,7 @@ install:
 # Build frontend for production
 build:
     cd frontend && pnpm build
+
+# Stop all dev processes
+stop:
+    lsof -t -i:8000 -i:3000 2>/dev/null | xargs kill 2>/dev/null && echo "Stopped" || echo "Nothing running"
