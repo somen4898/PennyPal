@@ -14,7 +14,9 @@ class SqlAlchemyGroupRepository(GroupRepository):
 
     async def get_by_id(self, group_id: int) -> Group | None:
         result = await self._session.execute(
-            select(GroupModel).options(selectinload(GroupModel.members)).where(GroupModel.id == group_id)
+            select(GroupModel)
+            .options(selectinload(GroupModel.members))
+            .where(GroupModel.id == group_id)
         )
         model = result.scalar_one_or_none()
         return GroupMapper.to_domain(model) if model else None
@@ -81,8 +83,8 @@ class SqlAlchemyGroupRepository(GroupRepository):
 
     async def get_member_count(self, group_id: int) -> int:
         result = await self._session.execute(
-            select(func.count()).select_from(GroupMemberModel).where(
-                GroupMemberModel.group_id == group_id
-            )
+            select(func.count())
+            .select_from(GroupMemberModel)
+            .where(GroupMemberModel.group_id == group_id)
         )
         return result.scalar_one()

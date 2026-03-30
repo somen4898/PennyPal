@@ -37,6 +37,13 @@ repos:
       - id: detect-secrets
         args: ['--baseline', '.secrets.baseline']
 
+  - repo: https://github.com/gitguardian/ggshield
+    rev: v1.35.0
+    hooks:
+      - id: ggshield
+        language: python
+        stages: [pre-commit]
+
   - repo: https://github.com/alessandrojcm/commitlint-pre-commit-hook
     rev: v9.16.0
     hooks:

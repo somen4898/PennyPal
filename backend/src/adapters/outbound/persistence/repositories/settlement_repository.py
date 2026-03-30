@@ -46,14 +46,10 @@ class SqlAlchemySettlementRepository(SettlementRepository):
             await self._session.delete(model)
             await self._session.flush()
 
-    async def get_by_user(
-        self, user_id: int, skip: int = 0, limit: int = 100
-    ) -> list[Settlement]:
+    async def get_by_user(self, user_id: int, skip: int = 0, limit: int = 100) -> list[Settlement]:
         result = await self._session.execute(
             select(SettlementModel)
-            .where(
-                or_(SettlementModel.payer_id == user_id, SettlementModel.payee_id == user_id)
-            )
+            .where(or_(SettlementModel.payer_id == user_id, SettlementModel.payee_id == user_id))
             .offset(skip)
             .limit(limit)
         )

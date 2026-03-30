@@ -4,7 +4,10 @@ from sqlalchemy import or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from src.adapters.outbound.persistence.mappers.expense_mapper import ExpenseMapper, ExpenseSplitMapper
+from src.adapters.outbound.persistence.mappers.expense_mapper import (
+    ExpenseMapper,
+    ExpenseSplitMapper,
+)
 from src.adapters.outbound.persistence.models.expense import ExpenseModel, ExpenseSplitModel
 from src.domain.entities.expense import Expense, ExpenseSplit
 from src.domain.ports.repositories.expense_repository import ExpenseRepository
@@ -62,9 +65,7 @@ class SqlAlchemyExpenseRepository(ExpenseRepository):
             await self._session.delete(model)
             await self._session.flush()
 
-    async def get_by_group(
-        self, group_id: int, skip: int = 0, limit: int = 100
-    ) -> list[Expense]:
+    async def get_by_group(self, group_id: int, skip: int = 0, limit: int = 100) -> list[Expense]:
         result = await self._session.execute(
             select(ExpenseModel)
             .options(selectinload(ExpenseModel.splits))
@@ -74,9 +75,7 @@ class SqlAlchemyExpenseRepository(ExpenseRepository):
         )
         return [ExpenseMapper.to_domain(m) for m in result.scalars().all()]
 
-    async def get_by_user(
-        self, user_id: int, skip: int = 0, limit: int = 100
-    ) -> list[Expense]:
+    async def get_by_user(self, user_id: int, skip: int = 0, limit: int = 100) -> list[Expense]:
         result = await self._session.execute(
             select(ExpenseModel)
             .join(ExpenseSplitModel)
@@ -102,10 +101,12 @@ class SqlAlchemyExpenseRepository(ExpenseRepository):
         )
         splits = []
         for model in result.scalars().all():
-            splits.append({
-                "expense_creator_id": model.expense.created_by_id,
-                "user_id": model.user_id,
-                "amount": Decimal(str(model.amount)),
-                "total_amount": Decimal(str(model.expense.amount)),
-            })
+            splits.append(
+                {
+                    "expense_creator_id": model.expense.created_by_id,
+                    "user_id": model.user_id,
+                    "amount": Decimal(str(model.amount)),
+                    "total_amount": Decimal(str(model.expense.amount)),
+                }
+            )
         return splits

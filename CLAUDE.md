@@ -1,6 +1,6 @@
-# PennyPal
+# SETTL (formerly PennyPal)
 
-Expense-splitting app with Claude-powered chatbot. Web-first, mobile later.
+Expense-splitting app with Claude-powered chatbot. CRED-inspired dark luxury UI. Web-first, mobile later.
 
 ## Architecture
 

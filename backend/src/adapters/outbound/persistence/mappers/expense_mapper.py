@@ -1,15 +1,11 @@
 from decimal import Decimal
 
-from src.adapters.outbound.persistence.models.expense import ExpenseModel, ExpenseSplitModel, SplitTypeEnum
+from src.adapters.outbound.persistence.models.expense import (
+    ExpenseModel,
+    ExpenseSplitModel,
+    SplitTypeEnum,
+)
 from src.domain.entities.expense import Expense, ExpenseSplit, SplitType
-
-
-_SPLIT_TYPE_MAP = {
-    SplitTypeEnum.EQUAL: SplitType.EQUAL,
-    SplitTypeEnum.EXACT: SplitType.EXACT,
-    SplitTypeEnum.PERCENTAGE: SplitType.PERCENTAGE,
-}
-_SPLIT_TYPE_REVERSE = {v: k for k, v in _SPLIT_TYPE_MAP.items()}
 
 
 class ExpenseSplitMapper:
@@ -45,7 +41,7 @@ class ExpenseMapper:
             amount=Decimal(str(model.amount)),
             group_id=model.group_id,
             created_by_id=model.created_by_id,
-            split_type=_SPLIT_TYPE_MAP[model.split_type],
+            split_type=SplitType(model.split_type.value),
             description=model.description,
             currency=model.currency,
             created_at=model.created_at,
@@ -61,7 +57,7 @@ class ExpenseMapper:
             description=entity.description,
             amount=entity.amount,
             currency=entity.currency,
-            split_type=_SPLIT_TYPE_REVERSE[entity.split_type],
+            split_type=SplitTypeEnum(entity.split_type.value),
             group_id=entity.group_id,
             created_by_id=entity.created_by_id,
         )

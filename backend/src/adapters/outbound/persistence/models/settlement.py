@@ -29,5 +29,7 @@ class SettlementModel(Base):
     updated_at = mapped_column(DateTime(timezone=True), onupdate=func.now())
 
     payer = relationship("UserModel", back_populates="settlements_paid", foreign_keys=[payer_id])
-    payee = relationship("UserModel", back_populates="settlements_received", foreign_keys=[payee_id])
+    payee = relationship(
+        "UserModel", back_populates="settlements_received", foreign_keys=[payee_id]
+    )
     group = relationship("GroupModel")

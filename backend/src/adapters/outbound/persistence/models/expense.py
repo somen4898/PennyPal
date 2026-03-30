@@ -29,7 +29,9 @@ class ExpenseModel(Base):
 
     group = relationship("GroupModel", back_populates="expenses")
     created_by = relationship("UserModel", back_populates="expenses_created")
-    splits = relationship("ExpenseSplitModel", back_populates="expense", cascade="all, delete-orphan")
+    splits = relationship(
+        "ExpenseSplitModel", back_populates="expense", cascade="all, delete-orphan"
+    )
 
 
 class ExpenseSplitModel(Base):

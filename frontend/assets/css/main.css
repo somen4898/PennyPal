@@ -1,0 +1,158 @@
+@import "tailwindcss";
+@import "@nuxt/ui";
+
+
+/* === Base === */
+:root {
+  --settl-bg-primary: #0d0d0d;
+  --settl-bg-secondary: #121212;
+  --settl-bg-tertiary: #161616;
+  --settl-bg-elevated: #1e1e1e;
+  --settl-bg-surface: #252525;
+  --settl-text-primary: #efefef;
+  --settl-text-secondary: #b0b0b0;
+  --settl-text-muted: #6a6a6a;
+  --settl-accent-lime: #e5fe40;
+  --settl-accent-green: #3bffad;
+  --settl-accent-gold: #ffcb45;
+  --settl-accent-red: #ee4d37;
+  --settl-accent-purple: #6a35ff;
+}
+
+html, html.dark {
+  background-color: #0d0d0d !important;
+  color: #efefef !important;
+  font-family: 'DM Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: #0d0d0d !important;
+  min-height: 100vh;
+}
+
+/* === Typography === */
+.font-serif {
+  font-family: 'DM Serif Display', serif !important;
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', monospace !important;
+}
+
+/* === Card Components === */
+.settl-card {
+  background-color: var(--settl-bg-secondary);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 16px;
+  transition: all 0.2s ease-out;
+}
+
+.settl-card:hover {
+  background-color: var(--settl-bg-tertiary);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.settl-card-elevated {
+  background-color: var(--settl-bg-elevated);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+}
+
+/* === 3D Depth Button === */
+.settl-btn-primary {
+  background-color: var(--settl-accent-lime);
+  color: #0d0d0d;
+  font-weight: 700;
+  border-radius: 12px;
+  padding: 12px 24px;
+  transition: all 0.15s ease-out;
+  box-shadow: 0 4px 0 0 #b5cc30;
+  transform: translateY(0);
+}
+
+.settl-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 0 #b5cc30;
+}
+
+.settl-btn-primary:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 0 #b5cc30;
+}
+
+/* === Money Display === */
+.money {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--settl-accent-gold);
+  font-weight: 600;
+}
+
+.money-positive { color: var(--settl-accent-green); }
+.money-negative { color: var(--settl-accent-red); }
+
+/* === Status Badges === */
+.badge-pending {
+  background-color: rgba(255, 203, 69, 0.15);
+  color: var(--settl-accent-gold);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 100px;
+}
+
+.badge-completed {
+  background-color: rgba(59, 255, 173, 0.15);
+  color: var(--settl-accent-green);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 100px;
+}
+
+.badge-cancelled {
+  background-color: rgba(238, 77, 55, 0.15);
+  color: var(--settl-accent-red);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 100px;
+}
+
+/* === Stagger Animation === */
+.stagger-enter {
+  animation: staggerFadeUp 0.5s ease-out forwards;
+  opacity: 0;
+}
+
+@keyframes staggerFadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* === Grain Texture Overlay === */
+.grain::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.03;
+  z-index: 9999;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
+
+/* === Scrollbar === */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
+
+/* === Selection === */
+::selection {
+  background: rgba(229, 254, 64, 0.3);
+  color: #fff;
+}

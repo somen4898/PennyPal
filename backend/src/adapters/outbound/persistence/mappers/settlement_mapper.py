@@ -1,15 +1,10 @@
 from decimal import Decimal
 
-from src.adapters.outbound.persistence.models.settlement import SettlementModel, SettlementStatusEnum
+from src.adapters.outbound.persistence.models.settlement import (
+    SettlementModel,
+    SettlementStatusEnum,
+)
 from src.domain.entities.settlement import Settlement, SettlementStatus
-
-
-_STATUS_MAP = {
-    SettlementStatusEnum.PENDING: SettlementStatus.PENDING,
-    SettlementStatusEnum.COMPLETED: SettlementStatus.COMPLETED,
-    SettlementStatusEnum.CANCELLED: SettlementStatus.CANCELLED,
-}
-_STATUS_REVERSE = {v: k for k, v in _STATUS_MAP.items()}
 
 
 class SettlementMapper:
@@ -20,7 +15,7 @@ class SettlementMapper:
             payer_id=model.payer_id,
             payee_id=model.payee_id,
             amount=Decimal(str(model.amount)),
-            status=_STATUS_MAP[model.status],
+            status=SettlementStatus(model.status.value),
             currency=model.currency,
             description=model.description,
             group_id=model.group_id,
@@ -38,7 +33,7 @@ class SettlementMapper:
             amount=entity.amount,
             currency=entity.currency,
             description=entity.description,
-            status=_STATUS_REVERSE[entity.status],
+            status=SettlementStatusEnum(entity.status.value),
             group_id=entity.group_id,
             settled_at=entity.settled_at,
         )

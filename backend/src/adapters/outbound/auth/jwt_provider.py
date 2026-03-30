@@ -7,9 +7,7 @@ from src.domain.ports.auth_provider import AuthProvider
 
 
 class JwtAuthProvider(AuthProvider):
-    def __init__(
-        self, secret_key: str, algorithm: str = "HS256", expire_minutes: int = 30
-    ) -> None:
+    def __init__(self, secret_key: str, algorithm: str = "HS256", expire_minutes: int = 30) -> None:
         self._secret_key = secret_key
         self._algorithm = algorithm
         self._expire_minutes = expire_minutes
