@@ -1,4 +1,7 @@
+from typing import Any
+
 import anthropic
+from anthropic.types import MessageParam, TextBlock
 
 from src.domain.ports.ai_client import AiClient
 
@@ -9,12 +12,13 @@ class ClaudeClient(AiClient):
         self._model = model
 
     async def send_message(
-        self, message: str, system_prompt: str, context: list[dict] | None = None
+        self, message: str, system_prompt: str, context: list[dict[str, Any]] | None = None
     ) -> str:
-        messages: list[dict] = []
+        messages: list[MessageParam] = []
         if context:
-            messages.extend(context)
-        messages.append({"role": "user", "content": message})
+            for msg in context:
+                messages.append(MessageParam(role=msg["role"], content=msg["content"]))
+        messages.append(MessageParam(role="user", content=message))
 
         response = await self._client.messages.create(
             model=self._model,
@@ -22,4 +26,6 @@ class ClaudeClient(AiClient):
             system=system_prompt,
             messages=messages,
         )
-        return response.content[0].text
+        block = response.content[0]
+        assert isinstance(block, TextBlock)
+        return block.text

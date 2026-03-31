@@ -9,7 +9,7 @@ router = APIRouter()
 
 
 @router.get("/me", response_model=UserResponse)
-async def get_me(current_user: User = get_current_user):
+async def get_me(current_user: User = get_current_user) -> UserResponse:
     return UserResponse(
         id=current_user.id,
         email=current_user.email,
@@ -26,7 +26,7 @@ async def update_me(
     body: UserUpdateRequest,
     current_user: User = get_current_user,
     container: Container = get_container,
-):
+) -> UserResponse:
     if body.email is not None:
         current_user.email = body.email
     if body.username is not None:
@@ -54,7 +54,7 @@ async def list_users(
     limit: int = 100,
     current_user: User = get_current_user,
     container: Container = get_container,
-):
+) -> list[UserResponse]:
     users = await container.user_repo.list_all(skip, limit)
     return [
         UserResponse(

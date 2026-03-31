@@ -8,7 +8,7 @@ class LoginUserCommand:
         self._user_repo = user_repo
         self._auth = auth_provider
 
-    async def execute(self, email: str, password: str) -> dict:
+    async def execute(self, email: str, password: str) -> dict[str, str]:
         user = await self._user_repo.get_by_email(email)
         if not user or not self._auth.verify_password(password, user.hashed_password):
             raise UnauthorizedError("Incorrect email or password")

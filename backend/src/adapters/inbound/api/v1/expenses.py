@@ -47,7 +47,7 @@ async def create_expense(
     body: ExpenseCreateRequest,
     current_user: User = get_current_user,
     container: Container = get_container,
-):
+) -> ExpenseResponse:
     split_type = SplitType(body.split_type)
     user_ids = [s.user_id for s in body.splits]
     split_amounts = [s.amount for s in body.splits if s.amount is not None] or None
@@ -76,7 +76,7 @@ async def get_group_expenses(
     limit: int = 100,
     current_user: User = get_current_user,
     container: Container = get_container,
-):
+) -> list[ExpenseResponse]:
     query = GetGroupExpensesQuery(container.expense_repo, container.group_repo)
     expenses = await query.execute(group_id, current_user.id, skip, limit)
     return [_expense_response(e) for e in expenses]
@@ -87,7 +87,7 @@ async def get_expense(
     expense_id: int,
     current_user: User = get_current_user,
     container: Container = get_container,
-):
+) -> ExpenseResponse:
     expense = await container.expense_repo.get_by_id(expense_id)
     if not expense:
         raise NotFoundError("Expense not found")
@@ -102,7 +102,7 @@ async def delete_expense(
     expense_id: int,
     current_user: User = get_current_user,
     container: Container = get_container,
-):
+) -> dict[str, str]:
     expense = await container.expense_repo.get_by_id(expense_id)
     if not expense:
         raise NotFoundError("Expense not found")

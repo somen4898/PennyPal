@@ -15,7 +15,7 @@ router = APIRouter()
 
 
 @router.post("/register", response_model=UserResponse)
-async def register(body: UserCreateRequest, container: Container = get_container):
+async def register(body: UserCreateRequest, container: Container = get_container) -> UserResponse:
     cmd = RegisterUserCommand(container.user_repo, container.auth_provider)
     user = await cmd.execute(body.email, body.username, body.full_name, body.password)
     return UserResponse(
@@ -30,7 +30,7 @@ async def register(body: UserCreateRequest, container: Container = get_container
 
 
 @router.post("/login", response_model=TokenResponse)
-async def login(body: UserLoginRequest, container: Container = get_container):
+async def login(body: UserLoginRequest, container: Container = get_container) -> TokenResponse:
     cmd = LoginUserCommand(container.user_repo, container.auth_provider)
     result = await cmd.execute(body.email, body.password)
     return TokenResponse(**result)

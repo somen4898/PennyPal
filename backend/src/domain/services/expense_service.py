@@ -1,4 +1,5 @@
 from decimal import Decimal
+from typing import Any
 
 from src.domain.entities.expense import SplitType
 from src.domain.exceptions import ValidationError
@@ -10,12 +11,12 @@ def calculate_splits(
     user_ids: list[int],
     split_amounts: list[Decimal] | None,
     split_percentages: list[Decimal] | None,
-) -> list[dict]:
+) -> list[dict[str, Any]]:
     """Calculate split amounts based on split type. Pure function — no DB access."""
     if not user_ids:
         raise ValidationError("At least one user is required for splitting")
 
-    splits: list[dict] = []
+    splits: list[dict[str, Any]] = []
 
     if split_type == SplitType.EQUAL:
         amount_per_person = total_amount / len(user_ids)
