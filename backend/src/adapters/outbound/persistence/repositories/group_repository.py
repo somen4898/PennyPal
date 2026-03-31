@@ -25,7 +25,12 @@ class SqlAlchemyGroupRepository(GroupRepository):
         model = GroupMapper.to_model(group)
         self._session.add(model)
         await self._session.flush()
-        await self._session.refresh(model)
+        result = await self._session.execute(
+            select(GroupModel)
+            .options(selectinload(GroupModel.members))
+            .where(GroupModel.id == model.id)
+        )
+        model = result.scalar_one()
         return GroupMapper.to_domain(model)
 
     async def update(self, group: Group) -> Group:
@@ -34,7 +39,12 @@ class SqlAlchemyGroupRepository(GroupRepository):
         model.name = group.name
         model.description = group.description
         await self._session.flush()
-        await self._session.refresh(model)
+        result = await self._session.execute(
+            select(GroupModel)
+            .options(selectinload(GroupModel.members))
+            .where(GroupModel.id == model.id)
+        )
+        model = result.scalar_one()
         return GroupMapper.to_domain(model)
 
     async def get_user_groups(self, user_id: int) -> list[Group]:
