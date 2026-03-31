@@ -259,16 +259,19 @@ async function fetchDashboardData() {
     groups.value = groupsData
     settlements.value = settlementsData
 
-    // Compute balances from settlements
+    // Compute balances from actual group expense balances
     const userId = auth.user?.id
-    if (userId && settlementsData.length > 0) {
+    if (userId && groupsData.length > 0) {
       let owed = 0
       let debt = 0
-      for (const s of settlementsData) {
-        if (s.status === 'pending') {
-          if (s.payee_id === userId) owed += s.amount
-          if (s.payer_id === userId) debt += s.amount
-        }
+      const balancePromises = groupsData.map(g =>
+        api.get<Record<string, number>>(`/v1/settlements/group/${g.id}/balances`).catch(() => ({})),
+      )
+      const allBalances = await Promise.all(balancePromises)
+      for (const balanceMap of allBalances) {
+        const userBalance = balanceMap[String(userId)] ?? 0
+        if (userBalance > 0) owed += userBalance
+        else if (userBalance < 0) debt += Math.abs(userBalance)
       }
       totalOwed.value = owed
       totalDebt.value = debt
@@ -297,7 +300,7 @@ function memberInitial(member: { user_id: number }): string {
 }
 
 function formatMoney(amount: number): string {
-  return `$${amount.toFixed(2)}`
+  return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(amount)
 }
 
 function formatDate(dateStr: string | null): string {

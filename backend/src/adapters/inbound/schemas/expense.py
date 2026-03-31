@@ -27,13 +27,6 @@ class ExpenseCreateRequest(BaseModel):
         return v
 
 
-class ExpenseUpdateRequest(BaseModel):
-    title: str | None = None
-    description: str | None = None
-    amount: Decimal | None = None
-    currency: str | None = None
-
-
 class ExpenseSplitResponse(BaseModel):
     id: int
     expense_id: int

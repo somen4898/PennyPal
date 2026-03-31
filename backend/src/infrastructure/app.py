@@ -1,3 +1,4 @@
+import logging
 from collections.abc import Callable, Coroutine
 from typing import Any
 
@@ -9,6 +10,8 @@ from src.adapters.inbound.middleware.cors import setup_cors
 from src.adapters.inbound.middleware.error_handler import setup_error_handlers
 from src.infrastructure.container import Container
 from src.infrastructure.database import async_session_factory
+
+logger = logging.getLogger(__name__)
 
 
 def create_app() -> FastAPI:
@@ -28,13 +31,23 @@ def create_app() -> FastAPI:
         request: Request,
         call_next: Callable[[Request], Coroutine[Any, Any, Response]],
     ) -> Response:
-        async with async_session_factory() as session:  # noqa: SIM117
-            async with session.begin():
-                request.state.container = Container(session)
+        async with async_session_factory() as session:
+            request.state.container = Container(session)
+            try:
                 response = await call_next(request)
-                if response.status_code >= 400:
+                if response.status_code < 400:
+                    await session.commit()
+                else:
                     await session.rollback()
                 return response
+            except Exception:
+                await session.rollback()
+                logger.exception(
+                    "Unhandled error in request %s %s",
+                    request.method,
+                    request.url.path,
+                )
+                raise
 
     app.include_router(api_router, prefix="/api/v1")
 

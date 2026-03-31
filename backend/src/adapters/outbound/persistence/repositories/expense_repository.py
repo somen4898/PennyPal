@@ -71,6 +71,7 @@ class SqlAlchemyExpenseRepository(ExpenseRepository):
             select(ExpenseModel)
             .options(selectinload(ExpenseModel.splits))
             .where(ExpenseModel.group_id == group_id)
+            .order_by(ExpenseModel.created_at.desc())
             .offset(skip)
             .limit(limit)
         )

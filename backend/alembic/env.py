@@ -16,10 +16,13 @@ from src.adapters.outbound.persistence.models.group import (  # noqa: F401
 )
 from src.adapters.outbound.persistence.models.settlement import SettlementModel  # noqa: F401
 from src.adapters.outbound.persistence.models.user import UserModel  # noqa: F401
+from src.infrastructure.config import settings
 
 config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
+
+config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
 
 target_metadata = Base.metadata
 
