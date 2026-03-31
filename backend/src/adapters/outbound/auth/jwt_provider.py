@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
+import bcrypt
 from jose import JWTError, jwt
-from passlib.context import CryptContext
 
 from src.domain.ports.auth_provider import AuthProvider
 
@@ -11,13 +11,12 @@ class JwtAuthProvider(AuthProvider):
         self._secret_key = secret_key
         self._algorithm = algorithm
         self._expire_minutes = expire_minutes
-        self._pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
     def hash_password(self, password: str) -> str:
-        return self._pwd_context.hash(password)
+        return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
 
     def verify_password(self, plain_password: str, hashed_password: str) -> bool:
-        return self._pwd_context.verify(plain_password, hashed_password)
+        return bcrypt.checkpw(plain_password.encode(), hashed_password.encode())
 
     def create_access_token(self, subject: str) -> str:
         expire = datetime.utcnow() + timedelta(minutes=self._expire_minutes)

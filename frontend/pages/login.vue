@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { emailRules, validateField } from '~/composables/useValidation'
+
 definePageMeta({ layout: 'auth', middleware: 'auth' })
 
 const authStore = useAuthStore()
@@ -8,8 +10,18 @@ const password = ref('')
 const loading = ref(false)
 const error = ref('')
 const showPassword = ref(false)
+const touched = reactive({ email: false, password: false })
+
+const emailV = computed(() => validateField(email.value, emailRules))
+const passwordEmpty = computed(() => password.value.length === 0)
+const formValid = computed(() => emailV.value.valid && !passwordEmpty.value)
 
 async function handleLogin() {
+  touched.email = true
+  touched.password = true
+
+  if (!formValid.value) return
+
   error.value = ''
   loading.value = true
 
@@ -81,8 +93,15 @@ async function handleLogin() {
             required
             autocomplete="email"
             placeholder="you@example.com"
-            class="w-full rounded-xl border border-white/[0.06] bg-[#161616] px-4 py-3 text-sm text-[#efefef] placeholder-[#4a4a4a] outline-none transition-all duration-200 focus:border-[#e5fe40]/30 focus:ring-1 focus:ring-[#e5fe40]/20"
+            class="w-full rounded-xl border px-4 py-3 text-sm text-[#efefef] placeholder-[#4a4a4a] outline-none transition-all duration-200"
+            :class="touched.email && !emailV.valid
+              ? 'border-[#ee4d37]/40 bg-[#161616] focus:border-[#ee4d37]/60 focus:ring-1 focus:ring-[#ee4d37]/20'
+              : 'border-white/[0.06] bg-[#161616] focus:border-[#e5fe40]/30 focus:ring-1 focus:ring-[#e5fe40]/20'"
+            @blur="touched.email = true"
           >
+          <p v-if="touched.email && !emailV.valid" class="mt-1.5 text-xs text-[#ee4d37]">
+            {{ emailV.errors[0] }}
+          </p>
         </div>
 
         <!-- Password -->
@@ -98,7 +117,11 @@ async function handleLogin() {
               required
               autocomplete="current-password"
               placeholder="Enter your password"
-              class="w-full rounded-xl border border-white/[0.06] bg-[#161616] px-4 py-3 pr-12 text-sm text-[#efefef] placeholder-[#4a4a4a] outline-none transition-all duration-200 focus:border-[#e5fe40]/30 focus:ring-1 focus:ring-[#e5fe40]/20"
+              class="w-full rounded-xl border px-4 py-3 pr-12 text-sm text-[#efefef] placeholder-[#4a4a4a] outline-none transition-all duration-200"
+              :class="touched.password && passwordEmpty
+                ? 'border-[#ee4d37]/40 bg-[#161616] focus:border-[#ee4d37]/60 focus:ring-1 focus:ring-[#ee4d37]/20'
+                : 'border-white/[0.06] bg-[#161616] focus:border-[#e5fe40]/30 focus:ring-1 focus:ring-[#e5fe40]/20'"
+              @blur="touched.password = true"
             >
             <button
               type="button"
@@ -116,6 +139,9 @@ async function handleLogin() {
               </svg>
             </button>
           </div>
+          <p v-if="touched.password && passwordEmpty" class="mt-1.5 text-xs text-[#ee4d37]">
+            Password is required
+          </p>
         </div>
 
         <!-- Submit -->

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { passwordRules, usernameRules, emailRules, fullNameRules, validateField } from '~/composables/useValidation'
+
 definePageMeta({ layout: 'auth', middleware: 'auth' })
 
 const authStore = useAuthStore()
@@ -12,7 +14,25 @@ const error = ref('')
 const success = ref(false)
 const showPassword = ref(false)
 
+const touched = reactive({ email: false, username: false, fullName: false, password: false })
+
+const emailV = computed(() => validateField(email.value, emailRules))
+const usernameV = computed(() => validateField(username.value, usernameRules))
+const fullNameV = computed(() => validateField(fullName.value, fullNameRules))
+const passwordV = computed(() => validateField(password.value, passwordRules))
+
+const formValid = computed(
+  () => emailV.value.valid && usernameV.value.valid && fullNameV.value.valid && passwordV.value.valid,
+)
+
 async function handleRegister() {
+  touched.email = true
+  touched.username = true
+  touched.fullName = true
+  touched.password = true
+
+  if (!formValid.value) return
+
   error.value = ''
   loading.value = true
 
@@ -74,7 +94,7 @@ async function handleRegister() {
         </div>
       </Transition>
 
-      <!-- Error -->
+      <!-- Server error -->
       <Transition
         enter-active-class="transition-all duration-300 ease-out"
         enter-from-class="opacity-0 -translate-y-2"
@@ -109,8 +129,15 @@ async function handleRegister() {
             required
             autocomplete="email"
             placeholder="you@example.com"
-            class="w-full rounded-xl border border-white/[0.06] bg-[#161616] px-4 py-3 text-sm text-[#efefef] placeholder-[#4a4a4a] outline-none transition-all duration-200 focus:border-[#e5fe40]/30 focus:ring-1 focus:ring-[#e5fe40]/20"
+            class="w-full rounded-xl border px-4 py-3 text-sm text-[#efefef] placeholder-[#4a4a4a] outline-none transition-all duration-200"
+            :class="touched.email && !emailV.valid
+              ? 'border-[#ee4d37]/40 bg-[#161616] focus:border-[#ee4d37]/60 focus:ring-1 focus:ring-[#ee4d37]/20'
+              : 'border-white/[0.06] bg-[#161616] focus:border-[#e5fe40]/30 focus:ring-1 focus:ring-[#e5fe40]/20'"
+            @blur="touched.email = true"
           >
+          <p v-if="touched.email && !emailV.valid" class="mt-1.5 text-xs text-[#ee4d37]">
+            {{ emailV.errors[0] }}
+          </p>
         </div>
 
         <!-- Username -->
@@ -125,8 +152,15 @@ async function handleRegister() {
             required
             autocomplete="username"
             placeholder="Choose a username"
-            class="w-full rounded-xl border border-white/[0.06] bg-[#161616] px-4 py-3 text-sm text-[#efefef] placeholder-[#4a4a4a] outline-none transition-all duration-200 focus:border-[#e5fe40]/30 focus:ring-1 focus:ring-[#e5fe40]/20"
+            class="w-full rounded-xl border px-4 py-3 text-sm text-[#efefef] placeholder-[#4a4a4a] outline-none transition-all duration-200"
+            :class="touched.username && !usernameV.valid
+              ? 'border-[#ee4d37]/40 bg-[#161616] focus:border-[#ee4d37]/60 focus:ring-1 focus:ring-[#ee4d37]/20'
+              : 'border-white/[0.06] bg-[#161616] focus:border-[#e5fe40]/30 focus:ring-1 focus:ring-[#e5fe40]/20'"
+            @blur="touched.username = true"
           >
+          <p v-if="touched.username && !usernameV.valid" class="mt-1.5 text-xs text-[#ee4d37]">
+            {{ usernameV.errors[0] }}
+          </p>
         </div>
 
         <!-- Full Name -->
@@ -141,8 +175,15 @@ async function handleRegister() {
             required
             autocomplete="name"
             placeholder="Your full name"
-            class="w-full rounded-xl border border-white/[0.06] bg-[#161616] px-4 py-3 text-sm text-[#efefef] placeholder-[#4a4a4a] outline-none transition-all duration-200 focus:border-[#e5fe40]/30 focus:ring-1 focus:ring-[#e5fe40]/20"
+            class="w-full rounded-xl border px-4 py-3 text-sm text-[#efefef] placeholder-[#4a4a4a] outline-none transition-all duration-200"
+            :class="touched.fullName && !fullNameV.valid
+              ? 'border-[#ee4d37]/40 bg-[#161616] focus:border-[#ee4d37]/60 focus:ring-1 focus:ring-[#ee4d37]/20'
+              : 'border-white/[0.06] bg-[#161616] focus:border-[#e5fe40]/30 focus:ring-1 focus:ring-[#e5fe40]/20'"
+            @blur="touched.fullName = true"
           >
+          <p v-if="touched.fullName && !fullNameV.valid" class="mt-1.5 text-xs text-[#ee4d37]">
+            {{ fullNameV.errors[0] }}
+          </p>
         </div>
 
         <!-- Password -->
@@ -158,7 +199,11 @@ async function handleRegister() {
               required
               autocomplete="new-password"
               placeholder="Create a strong password"
-              class="w-full rounded-xl border border-white/[0.06] bg-[#161616] px-4 py-3 pr-12 text-sm text-[#efefef] placeholder-[#4a4a4a] outline-none transition-all duration-200 focus:border-[#e5fe40]/30 focus:ring-1 focus:ring-[#e5fe40]/20"
+              class="w-full rounded-xl border px-4 py-3 pr-12 text-sm text-[#efefef] placeholder-[#4a4a4a] outline-none transition-all duration-200"
+              :class="touched.password && !passwordV.valid
+                ? 'border-[#ee4d37]/40 bg-[#161616] focus:border-[#ee4d37]/60 focus:ring-1 focus:ring-[#ee4d37]/20'
+                : 'border-white/[0.06] bg-[#161616] focus:border-[#e5fe40]/30 focus:ring-1 focus:ring-[#e5fe40]/20'"
+              @blur="touched.password = true"
             >
             <button
               type="button"
@@ -175,6 +220,23 @@ async function handleRegister() {
                 <path d="M12.454 16.697L9.75 13.992a4 4 0 01-3.742-3.741L2.335 6.578A9.98 9.98 0 00.458 10c1.274 4.057 5.065 7 9.542 7 .847 0 1.669-.105 2.454-.303z" />
               </svg>
             </button>
+          </div>
+          <!-- Password strength checklist -->
+          <div v-if="touched.password || password.length > 0" class="mt-2 space-y-1">
+            <div
+              v-for="rule in passwordRules"
+              :key="rule.message"
+              class="flex items-center gap-2 text-xs transition-colors duration-200"
+              :class="rule.test(password) ? 'text-[#3bffad]' : 'text-[#6a6a6a]'"
+            >
+              <svg v-if="rule.test(password)" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+              </svg>
+              <svg v-else class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+              </svg>
+              {{ rule.message }}
+            </div>
           </div>
         </div>
 

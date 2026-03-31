@@ -15,7 +15,7 @@ dev:
     echo ""
 
     # Start backend in background
-    cd backend && source .venv/bin/activate && uvicorn run:app --reload --port 8000 &
+    cd backend && source .venv/bin/activate && uvicorn run:app --reload --port 8000 --loop asyncio &
     BACKEND_PID=$!
 
     # Start frontend in foreground (so Ctrl+C works)
@@ -28,7 +28,7 @@ dev:
 
 # Backend only
 backend:
-    cd backend && source .venv/bin/activate && uvicorn run:app --reload --port 8000
+    cd backend && source .venv/bin/activate && uvicorn run:app --reload --port 8000 --loop asyncio
 
 # Frontend only
 frontend:
@@ -45,6 +45,10 @@ test-unit:
 # Run integration tests only
 test-integration:
     cd backend && source .venv/bin/activate && python -m pytest tests/integration/ -v
+
+# Run frontend tests
+test-frontend:
+    cd frontend && pnpm test
 
 # Lint backend
 lint:
