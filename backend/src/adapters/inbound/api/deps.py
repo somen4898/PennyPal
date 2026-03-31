@@ -9,7 +9,8 @@ security_dep = Depends(security)  # module-level to satisfy B008
 
 
 async def _get_container(request: Request) -> Container:
-    return request.state.container
+    container: Container = request.state.container
+    return container
 
 
 container_dep = Depends(_get_container)  # module-level to satisfy B008

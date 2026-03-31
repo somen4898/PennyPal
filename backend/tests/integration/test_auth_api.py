@@ -3,6 +3,8 @@ from httpx import ASGITransport, AsyncClient
 
 from src.domain.entities.user import User
 
+TEST_PASSWORD = "Pass1234"  # pragma: allowlist secret
+
 
 @pytest.fixture
 def app(mock_container):
@@ -51,7 +53,7 @@ async def test_register(client, mock_container):
             "email": "new@test.com",
             "username": "newuser",
             "full_name": "New User",
-            "password": "pass123",
+            "password": TEST_PASSWORD,
         },
     )
 
@@ -75,7 +77,7 @@ async def test_register_duplicate_email(client, mock_container, test_user):
             "email": "alice@example.com",
             "username": "newuser",
             "full_name": "New User",
-            "password": "pass123",
+            "password": TEST_PASSWORD,
         },
     )
 
@@ -87,7 +89,7 @@ async def test_register_duplicate_email(client, mock_container, test_user):
 async def test_login(client, mock_container):
     response = await client.post(
         "/api/v1/auth/login",
-        json={"email": "alice@example.com", "password": "pass123"},
+        json={"email": "alice@example.com", "password": TEST_PASSWORD},
     )
 
     assert response.status_code == 200

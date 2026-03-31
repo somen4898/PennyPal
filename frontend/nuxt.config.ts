@@ -18,7 +18,7 @@ export default defineNuxtConfig({
   },
   routeRules: {
     '/api/**': {
-      proxy: { to: 'http://localhost:8000/**' },
+      proxy: { to: 'http://localhost:8000/api/**' },
     },
   },
   compatibilityDate: '2026-03-31',

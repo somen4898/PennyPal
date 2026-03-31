@@ -14,7 +14,7 @@ async def chat(
     body: ChatRequest,
     current_user: User = get_current_user,
     container: Container = get_container,
-):
+) -> ChatResponse:
     cmd = SendChatMessageCommand(container.ai_client, container.group_repo, container.expense_repo)
     result = await cmd.execute(body.message, current_user, body.group_id)
     return ChatResponse(**result)

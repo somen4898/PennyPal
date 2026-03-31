@@ -21,7 +21,7 @@ class ExpenseCreateRequest(BaseModel):
 
     @field_validator("splits")
     @classmethod
-    def validate_splits(cls, v: list) -> list:
+    def validate_splits(cls, v: list[ExpenseSplitInput]) -> list[ExpenseSplitInput]:
         if not v:
             raise ValueError("At least one split is required")
         return v

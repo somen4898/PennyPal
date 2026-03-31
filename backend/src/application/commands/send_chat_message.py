@@ -1,3 +1,5 @@
+from typing import Any
+
 from src.domain.entities.user import User
 from src.domain.ports.ai_client import AiClient
 from src.domain.ports.repositories.expense_repository import ExpenseRepository
@@ -32,7 +34,9 @@ class SendChatMessageCommand:
         self._group_repo = group_repo
         self._expense_repo = expense_repo
 
-    async def execute(self, message: str, user: User, group_id: int | None = None) -> dict:
+    async def execute(
+        self, message: str, user: User, group_id: int | None = None
+    ) -> dict[str, Any]:
         user_context = f"Name: {user.full_name}, Username: {user.username}"
 
         balance_context = "No group selected."

@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Any
 
 from src.domain.entities.expense import Expense, ExpenseSplit
 
@@ -28,4 +29,4 @@ class ExpenseRepository(ABC):
     async def get_by_user(self, user_id: int, skip: int = 0, limit: int = 100) -> list[Expense]: ...
 
     @abstractmethod
-    async def get_group_splits(self, group_id: int) -> list[dict]: ...
+    async def get_group_splits(self, group_id: int) -> list[dict[str, Any]]: ...

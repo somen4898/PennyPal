@@ -1,9 +1,10 @@
 from collections import defaultdict
 from decimal import Decimal
+from typing import Any
 
 
 def calculate_balances_from_splits(
-    splits: list[dict],
+    splits: list[dict[str, Any]],
 ) -> dict[int, Decimal]:
     """Calculate net balances from expense split data. Pure function.
 
@@ -27,7 +28,7 @@ def calculate_balances_from_splits(
 def generate_settlement_suggestions(
     balances: dict[int, Decimal],
     group_id: int,
-) -> list[dict]:
+) -> list[dict[str, Any]]:
     """Greedy algorithm to minimize settlement transactions. Pure function."""
     # Filter out zero balances
     filtered = {uid: bal for uid, bal in balances.items() if bal != Decimal("0")}
@@ -43,7 +44,7 @@ def generate_settlement_suggestions(
         reverse=True,
     )
 
-    settlements: list[dict] = []
+    settlements: list[dict[str, Any]] = []
     i, j = 0, 0
 
     while i < len(creditors) and j < len(debtors):

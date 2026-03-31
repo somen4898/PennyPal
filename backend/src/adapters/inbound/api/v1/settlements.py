@@ -1,3 +1,6 @@
+from decimal import Decimal
+from typing import Any
+
 from fastapi import APIRouter
 
 from src.adapters.inbound.api.deps import get_container, get_current_user
@@ -39,7 +42,7 @@ async def create_settlement(
     body: SettlementCreateRequest,
     current_user: User = get_current_user,
     container: Container = get_container,
-):
+) -> SettlementResponse:
     cmd = CreateSettlementCommand(
         container.settlement_repo, container.user_repo, container.group_repo
     )
@@ -60,7 +63,7 @@ async def list_settlements(
     limit: int = 100,
     current_user: User = get_current_user,
     container: Container = get_container,
-):
+) -> list[SettlementResponse]:
     settlements = await container.settlement_repo.get_by_user(current_user.id, skip, limit)
     return [_settlement_response(s) for s in settlements]
 
@@ -70,7 +73,7 @@ async def get_group_balances(
     group_id: int,
     current_user: User = get_current_user,
     container: Container = get_container,
-):
+) -> dict[str, Decimal]:
     query = GetBalancesQuery(container.expense_repo, container.group_repo, container.user_repo)
     return await query.execute(group_id, current_user.id)
 
@@ -80,7 +83,7 @@ async def get_suggestions(
     group_id: int,
     current_user: User = get_current_user,
     container: Container = get_container,
-):
+) -> list[dict[str, Any]]:
     query = GetSettlementSuggestionsQuery(
         container.expense_repo, container.group_repo, container.user_repo
     )
@@ -93,7 +96,7 @@ async def update_settlement(
     body: SettlementUpdateRequest,
     current_user: User = get_current_user,
     container: Container = get_container,
-):
+) -> SettlementResponse:
     status_enum = SettlementStatus(body.status) if body.status else None
     cmd = UpdateSettlementCommand(container.settlement_repo)
     settlement = await cmd.execute(
@@ -110,7 +113,7 @@ async def delete_settlement(
     settlement_id: int,
     current_user: User = get_current_user,
     container: Container = get_container,
-):
+) -> dict[str, str]:
     settlement = await container.settlement_repo.get_by_id(settlement_id)
     if not settlement:
         raise NotFoundError("Settlement not found")

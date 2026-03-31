@@ -1,3 +1,5 @@
+from typing import Any
+
 from src.domain.exceptions import ForbiddenError
 from src.domain.ports.repositories.expense_repository import ExpenseRepository
 from src.domain.ports.repositories.group_repository import GroupRepository
@@ -19,7 +21,7 @@ class GetSettlementSuggestionsQuery:
         self._group_repo = group_repo
         self._user_repo = user_repo
 
-    async def execute(self, group_id: int, user_id: int) -> list[dict]:
+    async def execute(self, group_id: int, user_id: int) -> list[dict[str, Any]]:
         member = await self._group_repo.get_member(group_id, user_id)
         if not member:
             raise ForbiddenError("Not a member of this group")

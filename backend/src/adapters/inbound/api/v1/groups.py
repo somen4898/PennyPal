@@ -46,7 +46,7 @@ async def create_group(
     body: GroupCreateRequest,
     current_user: User = get_current_user,
     container: Container = get_container,
-):
+) -> GroupResponse:
     cmd = CreateGroupCommand(container.group_repo)
     group = await cmd.execute(body.name, body.description, current_user.id)
     return _group_response(group)
@@ -56,7 +56,7 @@ async def create_group(
 async def list_groups(
     current_user: User = get_current_user,
     container: Container = get_container,
-):
+) -> list[GroupResponse]:
     query = GetUserGroupsQuery(container.group_repo)
     groups = await query.execute(current_user.id)
     return [_group_response(g) for g in groups]
@@ -67,7 +67,7 @@ async def get_group(
     group_id: int,
     current_user: User = get_current_user,
     container: Container = get_container,
-):
+) -> GroupResponse:
     group = await container.group_repo.get_by_id(group_id)
     if not group:
         raise NotFoundError("Group not found")
@@ -83,7 +83,7 @@ async def update_group(
     body: GroupUpdateRequest,
     current_user: User = get_current_user,
     container: Container = get_container,
-):
+) -> GroupResponse:
     group = await container.group_repo.get_by_id(group_id)
     if not group:
         raise NotFoundError("Group not found")
@@ -105,7 +105,7 @@ async def invite_member(
     body: GroupInviteRequest,
     current_user: User = get_current_user,
     container: Container = get_container,
-):
+) -> dict[str, str]:
     cmd = AddGroupMemberCommand(container.group_repo, container.user_repo)
     await cmd.execute(group_id, body.user_id, body.is_admin, current_user.id)
     return {"message": "User invited successfully"}
@@ -117,7 +117,7 @@ async def remove_member(
     user_id: int,
     current_user: User = get_current_user,
     container: Container = get_container,
-):
+) -> dict[str, str]:
     group = await container.group_repo.get_by_id(group_id)
     if not group:
         raise NotFoundError("Group not found")

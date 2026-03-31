@@ -1,6 +1,6 @@
 from datetime import UTC, datetime
 
-from src.domain.entities.settlement import SettlementStatus
+from src.domain.entities.settlement import Settlement, SettlementStatus
 from src.domain.exceptions import ForbiddenError, NotFoundError
 from src.domain.ports.repositories.settlement_repository import SettlementRepository
 
@@ -15,7 +15,7 @@ class UpdateSettlementCommand:
         current_user_id: int,
         description: str | None = None,
         status: SettlementStatus | None = None,
-    ):
+    ) -> Settlement:
         settlement = await self._settlement_repo.get_by_id(settlement_id)
         if not settlement:
             raise NotFoundError("Settlement not found")
