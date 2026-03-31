@@ -54,5 +54,7 @@ class SqlAlchemyUserRepository(UserRepository):
         return [UserMapper.to_domain(m) for m in result.scalars().all()]
 
     async def list_all(self, skip: int = 0, limit: int = 100) -> list[User]:
-        result = await self._session.execute(select(UserModel).offset(skip).limit(limit))
+        result = await self._session.execute(
+            select(UserModel).order_by(UserModel.created_at.desc()).offset(skip).limit(limit)
+        )
         return [UserMapper.to_domain(m) for m in result.scalars().all()]

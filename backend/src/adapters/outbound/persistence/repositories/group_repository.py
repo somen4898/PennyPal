@@ -43,6 +43,7 @@ class SqlAlchemyGroupRepository(GroupRepository):
             .join(GroupMemberModel)
             .options(selectinload(GroupModel.members))
             .where(GroupMemberModel.user_id == user_id)
+            .order_by(GroupModel.created_at.desc())
         )
         return [GroupMapper.to_domain(m) for m in result.scalars().all()]
 

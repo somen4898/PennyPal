@@ -50,6 +50,7 @@ class SqlAlchemySettlementRepository(SettlementRepository):
         result = await self._session.execute(
             select(SettlementModel)
             .where(or_(SettlementModel.payer_id == user_id, SettlementModel.payee_id == user_id))
+            .order_by(SettlementModel.created_at.desc())
             .offset(skip)
             .limit(limit)
         )
@@ -61,6 +62,7 @@ class SqlAlchemySettlementRepository(SettlementRepository):
         result = await self._session.execute(
             select(SettlementModel)
             .where(SettlementModel.group_id == group_id)
+            .order_by(SettlementModel.created_at.desc())
             .offset(skip)
             .limit(limit)
         )

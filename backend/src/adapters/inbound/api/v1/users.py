@@ -3,6 +3,7 @@ from fastapi import APIRouter
 from src.adapters.inbound.api.deps import get_container, get_current_user
 from src.adapters.inbound.schemas.user import UserResponse, UserUpdateRequest
 from src.domain.entities.user import User
+from src.domain.exceptions import ConflictError
 from src.infrastructure.container import Container
 
 router = APIRouter()
@@ -27,9 +28,15 @@ async def update_me(
     current_user: User = get_current_user,
     container: Container = get_container,
 ) -> UserResponse:
-    if body.email is not None:
+    if body.email is not None and body.email != current_user.email:
+        existing = await container.user_repo.get_by_email(body.email)
+        if existing:
+            raise ConflictError("Email already registered")
         current_user.email = body.email
-    if body.username is not None:
+    if body.username is not None and body.username != current_user.username:
+        existing = await container.user_repo.get_by_username(body.username)
+        if existing:
+            raise ConflictError("Username already taken")
         current_user.username = body.username
     if body.full_name is not None:
         current_user.full_name = body.full_name

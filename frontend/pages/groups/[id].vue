@@ -448,12 +448,14 @@
                   >
                     <div class="flex items-center gap-2">
                       <div class="flex h-7 w-7 items-center justify-center rounded-full bg-[#ee4d37]/15 text-[9px] font-bold text-[#ee4d37]">
-                        {{ memberInitial(suggestion.from_user_id) }}
+                        {{ suggestion.payer.username.slice(0, 2).toUpperCase() }}
                       </div>
-                      <span class="text-sm text-[#b0b0b0]">pays</span>
+                      <span class="text-xs text-[#b0b0b0]">{{ suggestion.payer.full_name }}</span>
+                      <span class="text-sm text-[#6a6a6a]">pays</span>
                       <div class="flex h-7 w-7 items-center justify-center rounded-full bg-[#3bffad]/15 text-[9px] font-bold text-[#3bffad]">
-                        {{ memberInitial(suggestion.to_user_id) }}
+                        {{ suggestion.payee.username.slice(0, 2).toUpperCase() }}
                       </div>
+                      <span class="text-xs text-[#b0b0b0]">{{ suggestion.payee.full_name }}</span>
                     </div>
                     <div class="flex items-center gap-3">
                       <span class="money text-base">{{ formatMoney(suggestion.amount) }}</span>
@@ -598,10 +600,16 @@ const balances = ref<Record<string, number>>({})
 const loadingBalances = ref(false)
 
 // ── Suggestions State ──
+interface SuggestionUser {
+  id: number
+  username: string
+  full_name: string
+}
 interface Suggestion {
-  from_user_id: number
-  to_user_id: number
+  payer: SuggestionUser
+  payee: SuggestionUser
   amount: number
+  group_id: number
 }
 const suggestions = ref<Suggestion[]>([])
 const loadingSuggestions = ref(false)
@@ -780,8 +788,7 @@ async function deleteExpense(expenseId: number) {
 async function settleUp(suggestion: Suggestion) {
   try {
     await api.post('/v1/settlements/', {
-      payer_id: suggestion.from_user_id,
-      payee_id: suggestion.to_user_id,
+      payee_id: suggestion.payee.id,
       amount: suggestion.amount,
       group_id: Number(groupId),
     })
@@ -800,7 +807,7 @@ async function inviteMember() {
   inviteSuccess.value = null
 
   try {
-    await api.post(`/v1/groups/${groupId}/members`, { user_id: inviteUserId.value })
+    await api.post(`/v1/groups/${groupId}/invite`, { user_id: inviteUserId.value })
     inviteSuccess.value = `User ${inviteUserId.value} added to the group`
     inviteUserId.value = null
     // Refresh group data

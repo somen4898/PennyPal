@@ -4,6 +4,16 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
   ],
   css: ['~/assets/css/main.css'],
+  app: {
+    head: {
+      link: [
+        {
+          rel: 'stylesheet',
+          href: 'https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&family=JetBrains+Mono:wght@400;500;600&display=swap',
+        },
+      ],
+    },
+  },
   colorMode: {
     preference: 'dark',
     fallback: 'dark',

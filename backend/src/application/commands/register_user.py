@@ -1,7 +1,11 @@
+import logging
+
 from src.domain.entities.user import User
 from src.domain.exceptions import ConflictError
 from src.domain.ports.auth_provider import AuthProvider
 from src.domain.ports.repositories.user_repository import UserRepository
+
+logger = logging.getLogger(__name__)
 
 
 class RegisterUserCommand:
@@ -23,4 +27,6 @@ class RegisterUserCommand:
             full_name=full_name,
             hashed_password=hashed_password,
         )
-        return await self._user_repo.create(user)
+        created = await self._user_repo.create(user)
+        logger.info("User registered: id=%d email=%s", created.id, created.email)
+        return created
