@@ -269,7 +269,7 @@ async function fetchDashboardData() {
       )
       const allBalances = await Promise.all(balancePromises)
       for (const balanceMap of allBalances) {
-        const userBalance = balanceMap[String(userId)] ?? 0
+        const userBalance = balanceMap[auth.user?.username ?? ''] ?? 0
         if (userBalance > 0) owed += userBalance
         else if (userBalance < 0) debt += Math.abs(userBalance)
       }
