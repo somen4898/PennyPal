@@ -31,7 +31,12 @@ class SqlAlchemyExpenseRepository(ExpenseRepository):
         model = ExpenseMapper.to_model(expense)
         self._session.add(model)
         await self._session.flush()
-        await self._session.refresh(model)
+        result = await self._session.execute(
+            select(ExpenseModel)
+            .options(selectinload(ExpenseModel.splits))
+            .where(ExpenseModel.id == model.id)
+        )
+        model = result.scalar_one()
         return ExpenseMapper.to_domain(model)
 
     async def create_splits(self, splits: list[ExpenseSplit]) -> list[ExpenseSplit]:
@@ -52,7 +57,12 @@ class SqlAlchemyExpenseRepository(ExpenseRepository):
         model.amount = expense.amount
         model.currency = expense.currency
         await self._session.flush()
-        await self._session.refresh(model)
+        result = await self._session.execute(
+            select(ExpenseModel)
+            .options(selectinload(ExpenseModel.splits))
+            .where(ExpenseModel.id == model.id)
+        )
+        model = result.scalar_one()
         return ExpenseMapper.to_domain(model)
 
     async def delete(self, expense_id: int) -> None:
