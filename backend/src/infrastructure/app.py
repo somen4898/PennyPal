@@ -28,10 +28,13 @@ def create_app() -> FastAPI:
         request: Request,
         call_next: Callable[[Request], Coroutine[Any, Any, Response]],
     ) -> Response:
-        async with async_session_factory() as session, session.begin():
-            request.state.container = Container(session)
-            response = await call_next(request)
-            return response
+        async with async_session_factory() as session:  # noqa: SIM117
+            async with session.begin():
+                request.state.container = Container(session)
+                response = await call_next(request)
+                if response.status_code >= 400:
+                    await session.rollback()
+                return response
 
     app.include_router(api_router, prefix="/api/v1")
 

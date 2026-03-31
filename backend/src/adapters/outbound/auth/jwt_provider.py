@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 
 import bcrypt
 from jose import JWTError, jwt
@@ -21,7 +21,7 @@ class JwtAuthProvider(AuthProvider):
         return result
 
     def create_access_token(self, subject: str) -> str:
-        expire = datetime.utcnow() + timedelta(minutes=self._expire_minutes)
+        expire = datetime.now(UTC) + timedelta(minutes=self._expire_minutes)
         to_encode: dict[str, str | datetime] = {"sub": subject, "exp": expire}
         token: str = jwt.encode(to_encode, self._secret_key, algorithm=self._algorithm)
         return token

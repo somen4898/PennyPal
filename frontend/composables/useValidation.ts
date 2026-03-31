@@ -14,6 +14,7 @@ const usernameRegex = /^[a-zA-Z0-9_-]+$/
 
 export const passwordRules: ValidationRule[] = [
   { test: (v) => v.length >= 8, message: 'At least 8 characters' },
+  { test: (v) => v.length <= 128, message: 'At most 128 characters' },
   { test: (v) => /[A-Z]/.test(v), message: 'One uppercase letter' },
   { test: (v) => /[a-z]/.test(v), message: 'One lowercase letter' },
   { test: (v) => /[0-9]/.test(v), message: 'One number' },
